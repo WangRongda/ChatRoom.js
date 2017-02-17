@@ -17,4 +17,4 @@ Require nodejs module: express, socket.io
 
 	node websocket.js
 
-Now visit [http://localhost:8002](http://localhost:8002)
+Now visit [http://localhost:5150](http://localhost:5150)
