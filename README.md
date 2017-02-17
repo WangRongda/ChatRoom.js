@@ -4,7 +4,7 @@ ChatRoom for web based on Socket.io
 
 
 ### Install require ###
-Require nodejs 
+Require nodejs  <br />
 Require nodejs module: express, socket.io
 
 	yum install nodejs / apt-get install nodejs

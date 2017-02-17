@@ -97,7 +97,7 @@ io.sockets.on('connection', function(socket) {
         if ('/img' === data.text.substring(0, 4)) {
             // var keyword = require("querystring").stringify(data.text.substring(4));
             var keyword = encodeURIComponent(data.text.substring(4));
-            console.log("keyword" + keyword);
+            // console.log("keyword" + keyword);
             getExpress(keyword, socket);
         }
         else {
