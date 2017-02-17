@@ -83,8 +83,7 @@ body,
      position: absolute;
      min-width: 280px;
      opacity: 0;
-     float: left;
-     left: 0;
+     float: left; left: 0;
      padding: 10px 20px;
      box-sizing: border-box;
 }
@@ -193,9 +192,8 @@ body,
 }
 
 .messageText {
-     margin: 2px;
      float: left;
-     width: 100%;
+     margin: 2px;
      font-size: 18px;
      word-wrap: break-word;
      word-break: break-all;
@@ -204,6 +202,10 @@ body,
      padding: 10px;
      color: black;
      box-sizing: border-box;
+}
+
+.messageText img {
+     max-width: 100px;
 }
 
  ::selection {
@@ -258,4 +260,10 @@ pre {
      max-height: 50px;
      position: absolute;
      bottom:1px;
+}
+
+#previewImg {
+     position: absolute;
+     max-height: 400px;
+     pointer-events: none;
 }

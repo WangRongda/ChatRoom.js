@@ -4,10 +4,10 @@ document.body.onload = function() {
      var input = $("#input-bar textarea");
      var room = $("#room");
      var hisPan = $("#history");
-     
+
      // Customize right mouse click menu
-     // myMenu();
-     
+     myMenu();
+
      // show login panel
      login();
 
@@ -101,6 +101,28 @@ document.body.onload = function() {
                     "bottom": "0"
                }, "slow", startSock(username));
           });
+
+          function onHistoryPanelHeightChange(elm, callback) {
+               var lastHeight = elm[0].scrollHeight,
+                    newHeight;
+               (function run() {
+                    newHeight = elm[0].scrollHeight;
+                    if (lastHeight != newHeight)
+                         callback();
+                    lastHeight = newHeight;
+
+                    if (elm.onHistoryPanelHeightChangeTimer)
+                         clearTimeout(elm.onHistoryPanelHeightChangeTimer);
+
+                    elm.onHistoryPanelHeightChangeTimer = setTimeout(run, 200);
+               })();
+          }
+
+
+          onHistoryPanelHeightChange(hisPan, function() {
+               var h = hisPan[0].scrollHeight;
+               hisPan.scrollTop(h);
+          });
      }
 
      function startSock(username) {
@@ -122,7 +144,7 @@ document.body.onload = function() {
                     username: username
                });
           });
-          
+
           // listen server event below
           // listen event 'broadcast_reconnect' from server 
           // Get message than some one disconnet the room
@@ -160,8 +182,8 @@ document.body.onload = function() {
                // }
 
                // scroll bar to bottom
-               var h = $("#history")[0].scrollHeight;
-               $("#history").scrollTop(h);
+               // var h = $("#history")[0].scrollHeight;
+               // $("#history").scrollTop(h);
           });
           // Listen event 'broadcast_quit' from server
           // Get message that other people left
@@ -175,8 +197,8 @@ document.body.onload = function() {
                //           'You leave the chat room at ' + data.time + '</div>';
                // }
                // else {
-                    leaveMsg = '<div class="joinText">\'' + data.username +
-                         '\' leave the chat room at ' + data.time + '</div>';
+               leaveMsg = '<div class="joinText">\'' + data.username +
+                    '\' leave the chat room at ' + data.time + '</div>';
                // }
                hisPan.append(leaveMsg);
                // Notify 
@@ -185,8 +207,8 @@ document.body.onload = function() {
                // }
 
                // scroll bar to bottom
-               var h = $("#history")[0].scrollHeight;
-               $("#history").scrollTop(h);
+               // var h = $("#history")[0].scrollHeight;
+               // $("#history").scrollTop(h);
           });
 
           socket.on('expression', function(data) {
@@ -194,24 +216,70 @@ document.body.onload = function() {
                if (expression) {
                     expression.html(data.expression);
                }
-          });
-          
-          var isActive = true;
-          var notification = [];
-          var audio = document.createElement("audio");
-          audio.src = "http://115.159.75.162/notify.mp3";
+               $(".expression div").one("click.express", function() {
+                    socket.emit('sendExpression', {
+                         username: username,
+                         src: this.children[0].src
+                    });
+                    $("#previewImg").css("display", "none");
+               });
 
-          var k = 0,
-               i = 1;
-          window.onfocus = function() {
-               isActive = true;
-               for (k in notification) {
-                    notification[k].close();
+               $(".expression div").mousemove(function(e) {
+                    $("#previewImg")[0].src = this.children[0].src;
+                    $("#previewImg").css({
+                         "display": "block",
+                         "top": e.pageY - $("#previewImg").innerHeight(),
+                         "left": e.pageX
+                    });
+               });
+               $(".expression div").mouseleave(function() {
+                    $("#previewImg").css("display", "none");
+               });
+
+               // cancle event
+               $("body").one('keypress.cancleExpression', function(e) {
+                    if (27 == (e.keyCode || e.which)) {
+                         $(".expression").css("display", "none");
+                         expression.html("loding expression image...");
+                    }
+               });
+               $("body").one("click.cancleExpression", function() {
+                    $(".expression").css("display", "none");
+                    expression.html("loding expression image...");
+               });
+          });
+
+          socket.on('broadcast_expression', function(data) {
+               var Msg;
+               if (data.username === username) {
+                    Msg = '<div class="Message" style="float: right">' +
+                         '<div style="text-align: right">' +
+                         '<span class="time">[' +
+                         data.time + '] </span><span class="username">' +
+                         username + '</span>: </div><div class="messageText"' +
+                         'style="background: #85B4E9; float: right">' +
+                         '<img id="imageMsg" alt src=' + data.src + ' /></div>';
                }
-          };
-          window.onblur = function() {
-               isActive = false;
-          };
+               else {
+                    Msg = '<div class="Message"><div><span class="time">[' +
+                         data.time + '] </span><span class="username">' +
+                         data.username + '</span>: </div>' +
+                         '<div class="messageText">' +
+                         '<img id="imageMsg" alt="[Image]" src=' + data.src + ' /></div>';
+
+                    // Notify
+                    notify(data.username, "[Image]");
+               }
+               hisPan.append(Msg);
+
+
+               // scroll bar to bottom
+               // $("#imageMsg:last")[0].onload = function() {
+               //      var h = $("#history")[0].scrollHeight;
+               //      $("#history").scrollTop(h);
+               // };
+          });
+
           // Listen event 'broadcast_say' from server
           // Get message that other people say in the chat room
           socket.on('broadcast_say', function(data) {
@@ -223,10 +291,10 @@ document.body.onload = function() {
                if (data.username === username) {
                     Msg = '<div class="Message" style="float: right">' +
                          '<div style="text-align: right">' +
-                         '<span class="time">[' +
-                         data.time + '] </span><span class="username">' +
-                         username + '</span>:' + '</div>' +
-                         '<pre class="messageText" style="background: #85B4E9">' +
+                         '<span class="time">[' + data.time + '] </span>' +
+                         '<span class="username">' + username + '</span>:' +
+                         '</div><pre class="messageText"' +
+                         'style="background: #85B4E9; float: right">' +
                          text + '</pre></div>';
                }
                else {
@@ -234,51 +302,16 @@ document.body.onload = function() {
                          data.time + '] </span><span class="username">' +
                          data.username + '</span>:' + '</div>' +
                          '<pre class="messageText">' + text + '</pre></div>';
-                    if (!isActive) {
-                         if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
-                              // navigator.serviceWorker.register('sw.js');
-                              // Notification.requestPermission(function(result) {
-                              //      if (result === 'granted') {
-                              //           navigator.serviceWorker.ready.then(function(registration) {
-                              //                registration.showNotification('Notification with ServiceWorker');
-                              //           });
-                              //      }
-                              // });
-                         }
-                         else {
-                              if (window.Notification) {
-                                   if (Notification.permission === 'granted') {
-                                        notification[i] = new Notification(
-                                             data.username, {
-                                                  body: data.text,
-                                                  icon: "http://115.159.75.162/dan.png",
-                                                  // silent: false,
-                                                  // sound: 'http://115.159.75.162/notify.mp3'
-                                             });
-                                        notification[i].onclick = function() {
-                                             window.focus();
-                                             while (--i) {
-                                                  notification[i].close();
-                                             }
-                                        }
-                                        i++;
-                                   }
-                                   else {
-                                        Notification.requestPermission();
-                                   }
-                              }
-                              else alert('你的浏览器不支持消息提示');
-                              audio.play();
-                         }
-                    }
+
+                    notify(data.username, text);
                }
                hisPan.append(Msg);
 
                // scroll bar to bottom
-               var h = $("#history")[0].scrollHeight;
-               $("#history").scrollTop(h);
+               // var h = $("#history")[0].scrollHeight;
+               // $("#history").scrollTop(h);
           });
-          
+
           talking(username, socket);
      } // startSock
 
@@ -349,7 +382,7 @@ document.body.onload = function() {
                }
           }
 
-          function sendMesg(username) {
+          function sendMesg(username, socket) {
                var youMessage = input.val();
                if ("" === youMessage) {
                     return;
@@ -357,7 +390,7 @@ document.body.onload = function() {
                else if ("/img" == youMessage.substring(0, 4)) {
                     $(".expression").css("display", "inline-block");
                }
-               
+
                if (username == "") {
                     location.reload();
                }
@@ -380,8 +413,9 @@ document.body.onload = function() {
           }
      }
 
+     // Rewrite mouse right button menu;
      function myMenu() {
-          var menu = $("#myMenu");
+          // var menu = $("#myMenu");
           $(document).mousedown(function(aevent) { //设置该元素的 按下鼠标右键右键的 处理函数
                if (window.event) aevent = window.event; //解决兼容性
                if (aevent.button == 2) { //当事件属性button的值为2时，表用户按下了右键
@@ -397,13 +431,71 @@ document.body.onload = function() {
                }　　
           });
 
-          $("body").on('keypress.myMenu', function(e) {
-               if (27 == (e.keyCode || e.which)) {
-                    menu.css("display", "none");
+          // $("body").on('keypress.myMenu', function(e) {
+          //      if (27 == (e.keyCode || e.which)) {
+          //           menu.css("display", "none");
+          //      }
+          // });
+          // $("body").on("click.myMenu", function() {
+          //      menu.css("display", "none");
+          // });
+     }
+
+
+     var isActive = true;
+     var notification = [];
+     var audio = document.createElement("audio");
+     audio.src = "http://115.159.75.162/notify.mp3";
+
+     var k = 0,
+          i = 1;
+     window.onfocus = function() {
+          isActive = true;
+          for (k in notification) {
+               notification[k].close();
+          }
+     };
+     window.onblur = function() {
+          isActive = false;
+     };
+
+     function notify(notifyTitle, notifyBody) {
+          if (!isActive) {
+               if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+                    // navigator.serviceWorker.register('sw.js');
+                    // Notification.requestPermission(function(result) {
+                    //      if (result === 'granted') {
+                    //           navigator.serviceWorker.ready.then(function(registration) {
+                    //                registration.showNotification('Notification with ServiceWorker');
+                    //           });
+                    //      }
+                    // });
                }
-          });
-          $("body").on("click.myMenu", function() {
-               menu.css("display", "none");
-          });
+               else {
+                    if (window.Notification) {
+                         if (Notification.permission === 'granted') {
+                              notification[i] = new Notification(
+                                   notifyTitle, {
+                                        body: notifyBody,
+                                        icon: "http://115.159.75.162/dan.png",
+                                        // silent: false,
+                                        // sound: 'http://115.159.75.162/notify.mp3'
+                                   });
+                              notification[i].onclick = function() {
+                                   window.focus();
+                                   while (--i) {
+                                        notification[i].close();
+                                   }
+                              }
+                              i++;
+                         }
+                         else {
+                              Notification.requestPermission();
+                         }
+                    }
+                    else alert('你的浏览器不支持消息提示');
+                    audio.play();
+               }
+          }
      }
 };

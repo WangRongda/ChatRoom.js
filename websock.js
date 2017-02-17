@@ -19,8 +19,7 @@ io.sockets.on('connection', function(socket) {
     };
 
     //用户进入聊天室事件，向其他在线用户广播其用户名
-    socket.on('join', function(data) {
-        var date = new Date(),
+    socket.on('join', function(data) { var date = new Date(),
             hour = (8 + date.getHours()) % 24,
             minutes = date.getMinutes();
         hour = hour < 10 ? '0' + hour : hour;
@@ -46,6 +45,18 @@ io.sockets.on('connection', function(socket) {
         }
         io.emit('broadcast_reconnect', data);
         console.log("+ " + data.username + " reconnect at " + data.time);
+    });
+    
+    socket.on('sendExpression', function(data) {
+        var date = new Date(),
+            hour = (8 + date.getHours()) % 24,
+            minutes = date.getMinutes();
+        hour = hour < 10 ? '0' + hour : hour;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        data.time = hour + ":" + minutes;
+        
+        io.emit('broadcast_expression', data);
+        console.log(data.username + ": " + data.src);
     });
 
     //用户离开聊天室事件，向其他在线用户广播其离开
