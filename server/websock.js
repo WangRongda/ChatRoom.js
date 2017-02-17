@@ -4,7 +4,7 @@ var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server); //引入socket.io模块并绑定到服务器
-app.use('/', express.static(__dirname));
+app.use('/', express.static(__dirname + '/../client/'));
 server.listen(5150);
 
 // socket部分
