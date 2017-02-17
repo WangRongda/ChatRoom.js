@@ -1,7 +1,11 @@
 ChatRoom.js
 ===========
-ChatRoom for web based on Socket.io
+A chat room on web based on Socket.io
 
+### Demo ###
+[http://115.159.75.162/talk](http://115.159.75.162/talk) <br />
+tip: send /img + keyword <br /> to get image and send
+example: /imghi
 
 ### Install require ###
 Require nodejs  <br />
