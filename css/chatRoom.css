@@ -1,0 +1,261 @@
+html,
+body {
+     height: 100%;
+     width: 100%;
+     margin: 0;
+     padding: 0;
+     overflow-x: hidden;
+     /*background: url(/img/tree.jpg) 0 / cover;*/
+     -moz-user-select: none;
+     -webkit-user-select: none;
+}
+
+input textarea {
+     -moz-user-select: text;
+     -webkit-user-select: text;
+}
+
+#myMenu {
+     position: fixed;
+     left: 0;
+     top: 0;
+     background: #9d9f9a;
+     background: rgba(255, 255, 255, 0.7);
+     display: none;
+     box-shadow: 2px 2px 5px black;
+     padding: 10px 0;
+     font-size: 14px;
+     font-family: sans;
+     margin: 0;
+}
+
+#myMenu ul {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+}
+
+#myMenu li {
+     padding: 2px 20px;
+}
+
+#myMenu li:hover {
+     background: #b0994c;
+     color: white;
+     cursor: default;
+}
+
+body,
+.gaosi::before {
+     background: url(/img/tree.jpg) 0 / cover;
+}
+
+.opacity-contain {
+     position: relative;
+     padding: 10px 5px;
+     background: hsla(0, 0%, 100%, .3);
+     font-size: 20px;
+     /*line-height: 1.5;*/
+     border-radius: 10px;
+     width: 40%;
+     box-shadow: 5px 3px 30px black;
+     /*overflow: hidden;*/
+}
+
+.gaosi::before {
+     content: '';
+     margin: -15px;
+     position: absolute;
+     /*width: 100%;*/
+     /*height: 100%;*/
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+     filter: blur(16px);
+     z-index: -1;
+     /*position: fixed;*/
+     /*width: 43%;*/
+}
+
+#room {
+     cursor: default;
+     position: absolute;
+     min-width: 280px;
+     opacity: 0;
+     float: left;
+     left: 0;
+     padding: 10px 20px;
+     box-sizing: border-box;
+}
+
+#login-bar {
+     /*margin: 80px auto 30px 50px;*/
+     /*display: inline-block;*/
+     position: relative;
+     /*display: none;*/
+     padding: 0 0 10px 20px;
+}
+
+#login-bar input {
+     color: white;
+     background: transparent;
+     font-size: 15px;
+     padding: 5px;
+     outline: none;
+     /*border-color: black;*/
+     border-bottom-color: #b2b2b2;
+     border-right-color: #b2b2b2;
+     border-left-color: black;
+     border-top-color: black;
+     max-width: 90%;
+}
+
+#input-bar {
+     position: relative;
+     width: 100%;
+     bottom: -10px;
+     /*margin: 10px;*/
+     float: left;
+     padding: 7px 10px;
+     display: none;
+     opacity: 0;
+     box-sizing: border-box;
+     margin-top: 10px;
+}
+
+#history {
+     position: relative;
+     float: left;
+     width: 100%;
+     padding: 10px;
+     overflow-x: hidden;
+     overflow-y: hidden;
+     box-sizing: border-box;
+}
+
+#input-bar textarea {
+     background: transparent;
+     font-size: 20px;
+     height: 24px;
+     width: 85%;
+     border: none;
+     outline: none;
+     resize: none;
+     padding: 5px 0 0 0;
+     color: white;
+     padding: 0;
+     overflow-y: hidden;
+}
+
+#input-bar button {
+     background: transparent;
+     font-size: 18px;
+     height: 24px;
+     /*width: 100%;*/
+     border: none;
+     outline: none;
+     resize: none;
+     padding: 5px 0 0 0;
+     color: white;
+     bottom: 0px;
+     right: 0px;
+     vertical-align: bottom;
+     position: absolute;
+     margin: 15px;
+}
+
+.joinText {
+     font-size: 16px;
+     color: darkred;
+     font-family: sans;
+     float: left;
+     clear: both;
+}
+
+.Message {
+     margin: 0 5px 0 5px;
+     color: black;
+     float: left;
+     font-family: sans;
+     clear: both;
+     word-wrap: break-word;
+     white-space: normal;
+}
+
+.time {
+     font-size: 12px;
+}
+
+.username {
+     text-decoration: underline;
+     font-size: 16px;
+}
+
+.messageText {
+     margin: 2px;
+     float: left;
+     width: 100%;
+     font-size: 18px;
+     word-wrap: break-word;
+     word-break: break-all;
+     border-radius: 10px;
+     background: #b0994c;
+     padding: 10px;
+     color: black;
+     box-sizing: border-box;
+}
+
+ ::selection {
+     /*color: #ff0000;*/
+     background: #cfa632;
+}
+
+ ::-moz-selection {
+     /*color: #ff0000;*/
+     background: #cfa632;
+}
+
+ ::-webkit-selection {
+     background: #cfa632;
+}
+
+pre {
+     white-space: pre-wrap;
+     white-space: -moz-pre-wrap;
+     white-space: -pre-wrap;
+     white-space: -o-pre-wrap;
+     word-wrap: break-word;
+}
+
+.expression {
+     background: white;
+     color: black;
+     box-shadow: 0 0 8px black;
+     position: absolute;
+     float: left;
+     bottom: 80px;
+     left: 10px;
+     display: none;
+}
+
+.expression div {
+     float: left;
+     position: relative;
+     width: 50px;
+     height: 50px;
+     padding: 5px;
+     border-left: solid gray 0.5px;
+     border-top: solid gray 0.5px;
+}
+
+.expression div:hover img {
+     border: solid darkred 0.5px;
+}
+
+.expression img {
+     max-width: 50px;
+     max-height: 50px;
+     position: absolute;
+     bottom:1px;
+}

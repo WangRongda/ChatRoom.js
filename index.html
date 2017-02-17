@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, 
+        initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#485936">
+    <title>Chat Room</title>
+    <link rel="SHORTCUT ICON" href="img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="css/chatRoom.css">
+    <script src="js/jquery-3.1.1.min.js"></script>
+</head>
+
+<body>
+    <div id="room">
+        <div id="history" class="gaosi opacity-contain">
+            <blockquote>
+                "We grow neither better nor worse as we grow old but more like
+                ourselves."
+                <footer>&mdash;
+                    <cite> M. L. Becker </cite>
+                </footer>
+            </blockquote>
+        <div id="login-bar">username: <input type="text" autofocus="autofocus" />
+        </div>
+        </div>
+        <div id="input-bar" class="opacity-contain">
+            <textarea></textarea>
+            <button onFocus="this.blur()" id="send" type="button" value="send">
+                send</button>
+        </div>
+    </div>
+    <div class="expression">loding expression image...</div>
+
+    <blockquote id="myMenu"><ul><li>cut</li><li>copy</li><li>paste</li></ul></blockquote>
+    <script src="js/socket.io.js"></script>
+    <script src="js/chatRoom.js"></script>
+
+</body>
+
+</html>
