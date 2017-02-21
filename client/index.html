@@ -25,7 +25,7 @@
         </div>
         </div>
         <div id="input-bar" class="opacity-contain">
-            <textarea></textarea>
+            <div id="input" contenteditable="true"></div>
             <button onFocus="this.blur()" id="send" type="button" value="send">
                 send</button>
         </div>
@@ -34,6 +34,8 @@
 
     <blockquote id="myMenu"><ul><li>cut</li><li>copy</li><li>paste</li></ul></blockquote>
     <img id="previewImg" />
+    <input id="uploadFile" type="file">
+    <script src="js/jquery.ba-resize.min.js"></script>
     <script src="js/socket.io.js"></script>
     <script src="js/chatRoom.js"></script>
 

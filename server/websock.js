@@ -19,7 +19,8 @@ io.sockets.on('connection', function(socket) {
     };
 
     //用户进入聊天室事件，向其他在线用户广播其用户名
-    socket.on('join', function(data) { var date = new Date(),
+    socket.on('join', function(data) {
+        var date = new Date(),
             hour = (8 + date.getHours()) % 24,
             minutes = date.getMinutes();
         hour = hour < 10 ? '0' + hour : hour;
@@ -46,7 +47,7 @@ io.sockets.on('connection', function(socket) {
         io.emit('broadcast_reconnect', data);
         console.log("+ " + data.username + " reconnect at " + data.time);
     });
-    
+
     socket.on('sendExpression', function(data) {
         var date = new Date(),
             hour = (8 + date.getHours()) % 24,
@@ -54,9 +55,9 @@ io.sockets.on('connection', function(socket) {
         hour = hour < 10 ? '0' + hour : hour;
         minutes = minutes < 10 ? '0' + minutes : minutes;
         data.time = hour + ":" + minutes;
-        
-        io.emit('broadcast_expression', data);
-        console.log(data.username + ": " + data.src);
+
+        io.emit('broadcast_say', data);
+        console.log(data.username + ": " + data.text);
     });
 
     //用户离开聊天室事件，向其他在线用户广播其离开
@@ -95,6 +96,11 @@ io.sockets.on('connection', function(socket) {
         }
 
         if ('/img' === data.text.substring(0, 4)) {
+            if ('url' === data.text.substring(4, 7)) {
+                io.emit('broadcast_expression', data);
+                console.log(data.username + ": " + data.src);
+                return ;
+            }
             // var keyword = require("querystring").stringify(data.text.substring(4));
             var keyword = encodeURIComponent(data.text.substring(4));
             // console.log("keyword" + keyword);
@@ -148,10 +154,11 @@ function getExpress(keyword, socket) {
             $ = cheerio.load(data);
             var imgObj = $("img.img-responsive.center-block");
             var imgContain = "";
-            for (i = 0;i < 10; i++) {
+            for (i = 0; i < 10; i++) {
                 try {
                     var s = imgObj[i].attribs.src;
-                } catch (e) {
+                }
+                catch (e) {
                     console.log(e.message);
                     continue;
                 }
@@ -162,7 +169,7 @@ function getExpress(keyword, socket) {
             socket.emit("expression", {
                 expression: imgContain
             });
-            
+
         }).on('error', function(err) {
             console.log('error ' + err);
         });

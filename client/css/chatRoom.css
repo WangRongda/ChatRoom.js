@@ -10,11 +10,6 @@ body {
      -webkit-user-select: none;
 }
 
-input textarea {
-     -moz-user-select: text;
-     -webkit-user-select: text;
-}
-
 #myMenu {
      position: fixed;
      left: 0;
@@ -102,7 +97,6 @@ body,
      font-size: 15px;
      padding: 5px;
      outline: none;
-     /*border-color: black;*/
      border-bottom-color: #b2b2b2;
      border-right-color: #b2b2b2;
      border-left-color: black;
@@ -121,6 +115,7 @@ body,
      opacity: 0;
      box-sizing: border-box;
      margin-top: 10px;
+     overflow-y: scroll;
 }
 
 #history {
@@ -133,10 +128,9 @@ body,
      box-sizing: border-box;
 }
 
-#input-bar textarea {
+#input {
      background: transparent;
      font-size: 20px;
-     height: 24px;
      width: 85%;
      border: none;
      outline: none;
@@ -144,7 +138,9 @@ body,
      padding: 5px 0 0 0;
      color: white;
      padding: 0;
-     overflow-y: hidden;
+     /*overflow-y: hidden;*/
+     max-height: 72px;
+     min-height: 24px;
 }
 
 #input-bar button {
@@ -202,10 +198,13 @@ body,
      padding: 10px;
      color: black;
      box-sizing: border-box;
+     -moz-user-select: text;
+     -webkit-user-select: text;
 }
 
 .messageText img {
-     max-width: 100px;
+     max-width: 200px;
+     max-height: 200px;
 }
 
  ::selection {
@@ -223,6 +222,7 @@ body,
 }
 
 pre {
+     margin: 0;
      white-space: pre-wrap;
      white-space: -moz-pre-wrap;
      white-space: -pre-wrap;
@@ -266,4 +266,13 @@ pre {
      position: absolute;
      max-height: 400px;
      pointer-events: none;
+}
+
+#input img {
+     max-width: 200px;
+     max-height: 200px;
+}
+
+#uploadFile {
+     display: none;
 }

@@ -22,3 +22,10 @@ Require nodejs module: express, socket.io
 	node websocket.js
 
 Now visit [http://localhost:5150](http://localhost:5150)
+
+### Tip ###
+Input /img[keyword] (example /img哈哈). <br>
+Input area support image paste (not support local image). <br>
+Parset Http as link.<br>
+Notify (chrome and firefox) support. <br>
+...

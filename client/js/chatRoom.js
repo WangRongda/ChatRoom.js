@@ -1,7 +1,7 @@
 'use strict';
 
 document.body.onload = function() {
-     var input = $("#input-bar textarea");
+     var input = $("#input");
      var room = $("#room");
      var hisPan = $("#history");
 
@@ -90,6 +90,7 @@ document.body.onload = function() {
                "height": h + "px"
           }, "fast", function() {
                room.css("padding", "10px " + roomPadX + "px");
+               hisPan.css("min-height", (h - 48) + 'px');
                inputBar.css("display", "inline-block");
                hisPan.css("overflow-y", "scroll");
                $("head").append("<style> .gaosi::before { position: fixed; " +
@@ -102,7 +103,7 @@ document.body.onload = function() {
                }, "slow", startSock(username));
           });
 
-          function onHistoryPanelHeightChange(elm, callback) {
+          function onHisPanScrollHeightChange(elm, callback) {
                var lastHeight = elm[0].scrollHeight,
                     newHeight;
                (function run() {
@@ -111,18 +112,41 @@ document.body.onload = function() {
                          callback();
                     lastHeight = newHeight;
 
-                    if (elm.onHistoryPanelHeightChangeTimer)
-                         clearTimeout(elm.onHistoryPanelHeightChangeTimer);
+                    if (elm.onHisPanScrollHeightChangeTimer)
+                         clearTimeout(elm.onHisPanScrollHeightChangeTimer);
 
-                    elm.onHistoryPanelHeightChangeTimer = setTimeout(run, 200);
+                    elm.onHisPanScrollHeightChangeTimer = setTimeout(run, 200);
                })();
           }
 
 
-          onHistoryPanelHeightChange(hisPan, function() {
+          onHisPanScrollHeightChange(hisPan, function() {
                var h = hisPan[0].scrollHeight;
                hisPan.scrollTop(h);
           });
+
+          // function onInputHeightChange(elm, callback) {
+          //      var lastHeight = elm.innerHeight(),
+          //           newHeight;
+          //      (function run() {
+          //           newHeight = elm.innerHeight();
+          //           if (lastHeight != newHeight)
+          //                callback();
+          //           lastHeight = newHeight;
+
+          //           if (elm.onInputHeightChangeTimer)
+          //                clearTimeout(elm.onInputHeightChangeTimer);
+
+          //           elm.onInputHeightChangeTimer = setTimeout(run, 0);
+          //      })();
+          // }
+
+
+          // onInputHeightChange(input, function() {
+          //      var h = $("body").innerHeight() - 50 -
+          //           $("#input-bar").innerHeight();
+          //      hisPan.css("height", h + 'px');
+          // });
      }
 
      function startSock(username) {
@@ -181,9 +205,6 @@ document.body.onload = function() {
 
                // }
 
-               // scroll bar to bottom
-               // var h = $("#history")[0].scrollHeight;
-               // $("#history").scrollTop(h);
           });
           // Listen event 'broadcast_quit' from server
           // Get message that other people left
@@ -205,11 +226,7 @@ document.body.onload = function() {
                // if (!isActive) {
 
                // }
-
-               // scroll bar to bottom
-               // var h = $("#history")[0].scrollHeight;
-               // $("#history").scrollTop(h);
-          });
+ });
 
           socket.on('expression', function(data) {
                var expression = $(".expression");
@@ -217,9 +234,11 @@ document.body.onload = function() {
                     expression.html(data.expression);
                }
                $(".expression div").one("click.express", function() {
+                    var src = this.children[0].src;
                     socket.emit('sendExpression', {
                          username: username,
-                         src: this.children[0].src
+                         text: '<img onclick="window.open(src)" alt="[Image]" src="' +
+                              src + '" />'
                     });
                     $("#previewImg").css("display", "none");
                });
@@ -247,6 +266,7 @@ document.body.onload = function() {
                     $(".expression").css("display", "none");
                     expression.html("loding expression image...");
                });
+
           });
 
           socket.on('broadcast_expression', function(data) {
@@ -258,58 +278,52 @@ document.body.onload = function() {
                          data.time + '] </span><span class="username">' +
                          username + '</span>: </div><div class="messageText"' +
                          'style="background: #85B4E9; float: right">' +
-                         '<img id="imageMsg" alt src=' + data.src + ' /></div>';
+                         '<img class="imageMsg" alt src=' + data.src + ' /></div>';
                }
                else {
                     Msg = '<div class="Message"><div><span class="time">[' +
                          data.time + '] </span><span class="username">' +
                          data.username + '</span>: </div>' +
                          '<div class="messageText">' +
-                         '<img id="imageMsg" alt="[Image]" src=' + data.src + ' /></div>';
+                         '<img class="imageMsg" alt="[Image]" src=' + data.src + ' /></div>';
 
                     // Notify
                     notify(data.username, "[Image]");
                }
                hisPan.append(Msg);
 
+               $(".imageMsg:last").click(function() {
+                    window.open(this.src);
+               });
 
-               // scroll bar to bottom
-               // $("#imageMsg:last")[0].onload = function() {
-               //      var h = $("#history")[0].scrollHeight;
-               //      $("#history").scrollTop(h);
-               // };
           });
 
           // Listen event 'broadcast_say' from server
           // Get message that other people say in the chat room
           socket.on('broadcast_say', function(data) {
-               // console.log('(' + data.time + ')' + data.username + ': ' + data.text);
-               // show
                var Msg;
                var text = data.text;
-               // text = text.replace(/\n/g, "<br />");
+
+
                if (data.username === username) {
                     Msg = '<div class="Message" style="float: right">' +
                          '<div style="text-align: right">' +
                          '<span class="time">[' + data.time + '] </span>' +
                          '<span class="username">' + username + '</span>:' +
-                         '</div><pre class="messageText"' +
+                         '</div><div class="messageText"' +
                          'style="background: #85B4E9; float: right">' +
-                         text + '</pre></div>';
+                         text + '</div></div>';
                }
                else {
                     Msg = '<div class="Message"><div><span class="time">[' +
                          data.time + '] </span><span class="username">' +
                          data.username + '</span>:' + '</div>' +
-                         '<pre class="messageText">' + text + '</pre></div>';
+                         '<div class="messageText">' + text + '</div></div>';
 
                     notify(data.username, text);
                }
                hisPan.append(Msg);
 
-               // scroll bar to bottom
-               // var h = $("#history")[0].scrollHeight;
-               // $("#history").scrollTop(h);
           });
 
           talking(username, socket);
@@ -318,20 +332,17 @@ document.body.onload = function() {
      function talking(username, socket) {
           var originInputHeight = input.height();
           var originHistoryHeight = hisPan.height();
-          var timewrap = 0;
           input.bind("keypress", function(event) {
                sendClick(event);
           });
-          input.bind("input propertychange", function() {
-               wrap();
-          });
-          $("#send").off("click").on("click", function() {
-               sendMesg(username, socket);
-          });
+          // $("#input").bind("DOMNodeInserted", function(){  });
+
           $(window).on("resize.room", function() {
                var h = $("body").innerHeight() - 50 -
                     $("#input-bar").innerHeight();
                hisPan.css("height", h + 'px');
+               originHistoryHeight = h + 'px';
+               hisPan.css("min-height", (h - 48) + 'px');
                // scroll bar to bottom
                var h = $("#history")[0].scrollHeight;
                $("#history").scrollTop(h);
@@ -353,6 +364,17 @@ document.body.onload = function() {
                     room.css('width', window.innerWidth);
                }
           });
+          
+          input.resize(function() {
+               var h = $("body").innerHeight() - 50 -
+                    $("#input-bar").innerHeight();
+               hisPan.css("height", h + 'px');
+          });
+
+
+          $("#send").off("click").on("click", function() {
+               sendMesg(username, socket);
+          });
           // send message (keypress ctrl+enter or click send button)
           function sendClick(event) {
                var key = event.keyCode || event.which;
@@ -362,33 +384,61 @@ document.body.onload = function() {
                     sendMesg(username, socket);
                }
           }
-          // Wrap input (keypress enter)
-          function wrap() {
-               var currentLine = input.val().split("\n").length;
-               if (3 < currentLine) {
-                    return;
-               }
-               if (currentLine * 24 < input.height()) {
-                    // Backspace 
-                    timewrap--;
-                    hisPan.height(originHistoryHeight - 24 * timewrap);
-                    input.height(originInputHeight + 24 * timewrap);
-               }
-               else if (currentLine * 24 > input.height()) {
-                    // Enter
-                    timewrap++;
-                    hisPan.height(originHistoryHeight - 24 * timewrap);
-                    input.height(originInputHeight + 24 * timewrap);
-               }
-          }
 
           function sendMesg(username, socket) {
-               var youMessage = input.val();
-               if ("" === youMessage) {
+               // parse <img src='...' /> as <img src='...' onclick=
+               // "window.open(...)" />
+               var img = $("#input").find("img");
+               for (var k = 0; k < img.length; k++) {
+                    var src = img[k].src;
+                    img[k].setAttribute("onclick", 'window.open("' + src + '")');
+               }
+               
+               var text = input.html();
+               if ("" === text) {
                     return;
                }
-               else if ("/img" == youMessage.substring(0, 4)) {
-                    $(".expression").css("display", "inline-block");
+
+               // parse 'http.*' as '<a href="..." target="_blank">...</a>'
+               var i = 0,
+                    s = 0,
+                    j = 0;
+               for (i = 0; i < text.length; i++) {
+                    if ('<' === text[i]) {
+                         s++;
+                         continue;
+                    };
+                    if ('>' === text[i]) {
+                         s--;
+                         continue;
+                    };
+                    if (0 === s && "http" === text.substring(i, i + 4)) {
+                         text = text + ' ';
+                         for (j = i + 4;
+                              ' ' !== text[j] && '<' !== text[j] && '>' !== text[j]; j++);
+
+                         var href = '<a href="' + text.substring(i, j) +
+                              '" target="_blank">' + text.substring(i, j) +
+                              '</a>';
+                         text = text.slice(0, i) + href + text.slice(j);
+                         i += href.length - 1;
+                    }
+               }
+
+
+               var sayContaint = {
+                    username: username,
+                    text: text
+               };
+
+               if ("/img" == text.substring(0, 4)) {
+                    sayContaint.text = input.text();
+                    if ("url" == text.substring(4, 7)) {
+                         sayContaint.src = text.substring(7);
+                    }
+                    else {
+                         $(".expression").css("display", "inline-block");
+                    }
                }
 
                if (username == "") {
@@ -396,22 +446,12 @@ document.body.onload = function() {
                }
 
                // clear input
-               input.val("");
-               hisPan.height(originHistoryHeight);
-               input.height(originInputHeight);
-               timewrap = 0;
+               input.html("");
 
                //send  to server
-               socket.emit('say', {
-                    username: username,
-                    text: youMessage
-               });
-
-               // show in pan
-               // var youMessageBox = "<div><pre>" + username + youMessage + "</pre></div>";
-               // hisPan.append(youMessageBox);
+               socket.emit('say', sayContaint);
           }
-     }
+     } //talking
 
      // Rewrite mouse right button menu;
      function myMenu() {
