@@ -4,8 +4,6 @@ A chat room on web based on Socket.io
 
 ### Demo ###
 [http://115.159.75.162/talk](http://115.159.75.162/talk) <br />
-tip: send /img + keyword <br /> to get image and send
-example: /imghi
 
 ### Install require ###
 Require nodejs  <br />
@@ -24,7 +22,7 @@ Require nodejs module: express, socket.io
 Now visit [http://localhost:5150](http://localhost:5150)
 
 ### Tip ###
-Input /img[keyword] (example /img哈哈). <br>
+Input /img\[keyword\] (example /img哈哈). <br>
 Input area support image paste (not support local image). <br>
 Parset Http as link.<br>
 Notify (chrome and firefox) support. <br>
